@@ -1,21 +1,60 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, {useState} from 'react';
+import CalculatorDisplay from "./components/CalculatorDisplay"
+import KeyPad from "./components/KeyPad"
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 
-export default function App() {
+function App() {
+  const [result, setResult] = useState("")
+
+  const calculate = () => {
+    try {
+      setResult((eval(result) || "") + "");
+    } catch (e) {
+      setResult("error");
+    }
+  };
+  
+  const reset = () => {
+    setResult("");
+  };
+  
+  const backspace = () => {
+    setResult(result.slice(0, -1));
+  };
+  
+  const performCalculation = key => {
+    if (key === "=") {
+      calculate();
+    } else if (key === "AC") {
+      reset();
+    } else if (key === "C") {
+      backspace();
+    } else {
+      setResult(result + key);
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    <>
+      <SafeAreaView style={styles.container}>
+        <View>
+          <CalculatorDisplay result={result}/>
+          <KeyPad performCalculation={performCalculation}/>
+        </View>
+      </SafeAreaView>
+    </>
+  )
 }
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
   },
+
 });
+
+export default App;
